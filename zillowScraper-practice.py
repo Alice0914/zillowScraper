@@ -113,13 +113,6 @@ def grabdata(url, zipcode):
 
 
 
-# file_path = "script_content.txt"
-
-# # Open the file in write mode and save the content
-# with open(file_path, "w", encoding="utf-8") as file:
-#     file.write(script_content)
-# print(f"Script content has been saved to {file_path}")
-
 def parse(response):
     soup = BeautifulSoup(response.text, 'html.parser')
     
@@ -226,26 +219,6 @@ def extract_property_details(html_content):
          print('******')
          return {"error2": str(e)}
         
-    
-        
-def saveToExcel(df):
-    # Define file path
-    print('try saving')
-    try:
-        # Define file path
-        
-        #file_path = r"C:\Users\alice\OneDrive\Desktop\zillow\zillow_data.csv"
-        file_path = r"C:\Users\Admin\project\zillow_scrape\output.csv"
-    
-        existing_df = pd.read_csv(file_path)
-        # Reorder df to match the existing CSV headers
-        df = df.reindex(columns=existing_df.columns)
-        # Append without headers if file exists
-        df.to_csv(file_path, mode='a', index=False, header=False)
-        print(f"Data saved successfully to {file_path}")
-    
-    except Exception as e:
-        print(e)
 
 
 def nextpage(json_data):
@@ -303,6 +276,7 @@ def main():
                 combined_data2 = {**first_data2, **details2}
                 results.append(combined_data2)
             listingLength += len(listings2)
+            print(f"list length: {len(listings2)}")
             
     print(f"nextpage url: {url}, total listings length: {listingLength}")
     targetYear = ['2022', '2023', '2024']
