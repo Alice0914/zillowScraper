@@ -148,28 +148,15 @@ def parse(response):
 
 def getFirst(listing):
       property_data = {
-        'statusType': listing.get('statusType', None),
         'street': listing.get('addressStreet', None),
         'city': listing.get('addressCity', None),
         'state': listing.get('addressState', None),
         'zip': listing.get('addressZipcode', None),
-        'bathroomCount': listing.get('baths', None),
-        'bedroomCount': listing.get('beds', None),
         'livingArea': listing.get('area', None),
-        'latitude': listing.get('latLong', {}).get('latitude', None),
-        'longitude': listing.get('latLong', {}).get('longitude', None),
-        'price': listing.get('price', None),
+        #'latitude': listing.get('latLong', {}).get('latitude', None),
+        #'longitude': listing.get('latLong', {}).get('longitude', None),
         'status': listing.get('statusType', None),
-        'listingKey': listing.get('id', None),
-        'imageUrl': listing.get('imgSrc', None),
-        'brokerageName': listing.get('brokerName', None),
-        'marketingStatusSimplified': listing.get('marketingStatusSimplifiedCd', None),
-        'rawHomeStatus': listing.get('rawHomeStatusCd', None),
         'detailUrl': listing.get('detailUrl', None),
-        'countryCurrency': listing.get('countryCurrency', None),
-        'statusText': listing.get('statusText', None),
-        'isUndisclosedAddress': listing.get('isUndisclosedAddress', None),
-        'isZillowOwned': listing.get('isZillowOwned', None)
      }
       return property_data
 
@@ -205,42 +192,17 @@ def extract_property_details(html_content):
          
         # Property Details
         extracted_details['county'] = data['property'].get('county')
-        extracted_details['countyFIPS'] = data['property'].get('countyFIPS')
-        extracted_details['zipPlus4'] = data['property'].get('zipPlus4', '')
+        #extracted_details['countyFIPS'] = data['property'].get('countyFIPS')
+        #extracted_details['zipPlus4'] = data['property'].get('zipPlus4', '')
         
         # MLS Details
-        extracted_details['architecturalStyle'] = data['property']['resoFacts'].get('architecturalStyle', '')
         extracted_details['buildingStyle'] = data['property'].get('homeType', '')
         extracted_details['description'] = data['property'].get('description', '')
-        extracted_details['directions'] = data['property'].get('directions', '')
-        
-                
-        # Handling interiorFeatures safely
-        try:
-            interior_features = data.get('property', {}).get('resoFacts', {}).get('interiorFeatures', [])
-            if isinstance(interior_features, list):
-                extracted_details['hasCeilingFan'] = any('ceiling fan' in feature.lower() for feature in interior_features if isinstance(feature, str))
-                extracted_details['hasVaultedCeiling'] = any('vaulted ceiling' in feature.lower() for feature in interior_features if isinstance(feature, str))
-            else:
-                extracted_details['hasCeilingFan'] = False
-                extracted_details['hasVaultedCeiling'] = False
-        except Exception:
-            extracted_details['hasCeilingFan'] = False
-            extracted_details['hasVaultedCeiling'] = False
-      
-        extracted_details['lotSizeSquareFeet'] = data['property']['resoFacts'].get('lotSize', '')
-        extracted_details['neighborhood'] = data['property'].get('neighborhoodRegion', '')
-        extracted_details['newConstruction'] = data['property'].get('newConstructionType', False)
-
-        
-        extracted_details['price'] = data['property'].get('zestimate', 0)
-        extracted_details['daysOnMarket'] = data['property']['resoFacts'].get('cumulativeDaysOnMarket', 0)
-        extracted_details['rentalIndicator'] = data['property'].get('postingIsRental', False)
-        extracted_details['rental'] = data['property'].get('postingIsRental', False)  # Retained for clarity, but can be removed if redundant
-        extracted_details['roofType'] = data['property']['resoFacts'].get('roofType', '')
-        extracted_details['soldDate'] = data['property'].get('dateSold', '')
-        extracted_details['totalBuildingAreaSquareFeet'] = data['property']['resoFacts'].get('buildingArea', 0)
         extracted_details['yearBuilt'] = data['property'].get('yearBuilt', 0) 
+        extracted_details['lotSizeSquareFeet'] = data['property']['resoFacts'].get('lotSize', '')
+        extracted_details['rental'] = data['property'].get('postingIsRental', False)  # Retained for clarity, but can be removed if redundant
+        extracted_details['totalBuildingAreaSquareFeet'] = data['property']['resoFacts'].get('buildingArea', 0)
+
         
         property_data = data.get('property', {})
         reso_facts = property_data.get('resoFacts', {})
@@ -249,9 +211,6 @@ def extract_property_details(html_content):
         # Safely process 'atAGlanceFacts'
         at_a_glance_facts = reso_facts.get('atAGlanceFacts', [])
         if isinstance(at_a_glance_facts, list):
-          
-            # Property Type
-            extracted_details['propertyType'] = next((fact['factValue'] for fact in at_a_glance_facts if fact.get('factLabel') == 'Type'), None)
             
             # Year Built
             extracted_details['yearBuilt'] = next((fact['factValue'] for fact in at_a_glance_facts if fact.get('factLabel') == 'Year Built'), None)
@@ -354,6 +313,6 @@ def main():
     return found
 output = main()
 
-df = pd.DataFrame(output)
+#df = pd.DataFrame(output)
 
-print(len(df))
+print(output)
