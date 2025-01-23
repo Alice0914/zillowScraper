@@ -9,7 +9,6 @@ import random
 import os
 import argparse
 
-
 ######################################################################################
 
 def getProxies():
@@ -62,7 +61,6 @@ def detailDataGrab(url):
 
     
 def getDetails(url):
-    # url = 'https://www.zillow.com/homedetails/1415-Nicholas-Mnr-San-Antonio-TX-78258/83984537_zpid/'
     response = detailDataGrab(url)
     details = extract_property_details(response.text)
     # print(details)
@@ -74,7 +72,7 @@ def getDetails(url):
 # "referer": "https://www.zillow.com/homes/for_sale/{}_rb/".format(zipcode),
 
 
-def grabdata(url, zipcode):
+def grabdata(url):
     
     # Define the headers
     for i in range(10):
@@ -101,6 +99,7 @@ def grabdata(url, zipcode):
         # Make the GET request
         # response = requests.get(url, headers=headers, proxies=proxies)
         response = requests.get(url, headers=headers)
+        print(response)
         status = response.status_code
         print(f"url: {url}")
         print(f"status from grabdata request: {status}")
@@ -232,12 +231,11 @@ def nextpage(json_data):
 
 def main():
     baseurl = "https://www.zillow.com/{}/"
-    zipcode = '78258'
     #url = baseurl.format(zipcode)
-    url = "https://www.zillow.com/clayton-county-ga/sold/"
+    url = "https://www.zillow.com/clayton-county-ga/sold/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A1%7D%2C%22isMapVisible%22%3Atrue%2C%22mapBounds%22%3A%7B%22west%22%3A-84.64991163452149%2C%22east%22%3A-84.05287336547852%2C%22south%22%3A33.33989676497524%2C%22north%22%3A33.66139945648228%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A1622%2C%22regionType%22%3A4%7D%5D%2C%22filterState%22%3A%7B%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22fsba%22%3A%7B%22value%22%3Afalse%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22rs%22%3A%7B%22value%22%3Atrue%7D%2C%22built%22%3A%7B%22min%22%3A2022%2C%22max%22%3A2024%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A12%2C%22usersSearchTerm%22%3A%22Clayton%20County%20GA%22%7D"
     print(url)
 
-    response = grabdata(url, zipcode)
+    response = grabdata(url)
     json_data, listings = parse(response)
     results = []
     listingLength = len(listings)
@@ -248,26 +246,11 @@ def main():
         details = getDetails(url)
         combined_data = {**first_data, **details}
         results.append(combined_data)
-    
-    # next_url = nextpage(json_data)
-    # while next_url is not None:
-    #    print ('next url starts')
-    #    response2 = grabdata(next_url, zipcode)
-    #    json_data2, listings2 = parse(response2)
-    #    for listing in listings2:
-    #        first_data2 = getFirst(listing)
-    #        
-    #        url = listing['detailUrl']
-    #        details2 = getDetails(url)
-    #        combined_data2 = {**first_data2, **details2}
-    #        results.append(combined_data2)
-    #    listingLength += len(listings2)
-    #    next_url = nextpage(json_data2)
-    #    print(f"next url: {next_url}")
-    for i in range(18):
+
+    for i in range(19):
         if (i > 1):
-            url = "https://www.zillow.com/clayton-county-ga/sold/{}_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A18%7D%2C%22isMapVisible%22%3Atrue%2C%22mapBounds%22%3A%7B%22west%22%3A-84.64991163452149%2C%22east%22%3A-84.05287336547852%2C%22south%22%3A33.33989676497524%2C%22north%22%3A33.66139945648228%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A1622%2C%22regionType%22%3A4%7D%5D%2C%22filterState%22%3A%7B%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22fsba%22%3A%7B%22value%22%3Afalse%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22rs%22%3A%7B%22value%22%3Atrue%7D%2C%22built%22%3A%7B%22min%22%3A2022%2C%22max%22%3A2024%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A12%2C%22usersSearchTerm%22%3A%22Clayton%20County%20GA%22%7D".format(i)
-            response2 = grabdata(url, zipcode)
+            url = "https://www.zillow.com/clayton-county-ga/sold/"+str(i)+"_p/?searchQueryState=%7B%22pagination%22%3A%7B%22currentPage%22%3A"+str(i)+"%7D%2C%22isMapVisible%22%3Atrue%2C%22mapBounds%22%3A%7B%22west%22%3A-84.64991163452149%2C%22east%22%3A-84.05287336547852%2C%22south%22%3A33.33989676497524%2C%22north%22%3A33.66139945648228%7D%2C%22regionSelection%22%3A%5B%7B%22regionId%22%3A1622%2C%22regionType%22%3A4%7D%5D%2C%22filterState%22%3A%7B%22sort%22%3A%7B%22value%22%3A%22globalrelevanceex%22%7D%2C%22fsba%22%3A%7B%22value%22%3Afalse%7D%2C%22fsbo%22%3A%7B%22value%22%3Afalse%7D%2C%22nc%22%3A%7B%22value%22%3Afalse%7D%2C%22cmsn%22%3A%7B%22value%22%3Afalse%7D%2C%22auc%22%3A%7B%22value%22%3Afalse%7D%2C%22fore%22%3A%7B%22value%22%3Afalse%7D%2C%22rs%22%3A%7B%22value%22%3Atrue%7D%2C%22built%22%3A%7B%22min%22%3A2022%2C%22max%22%3A2024%7D%7D%2C%22isListVisible%22%3Atrue%2C%22mapZoom%22%3A12%2C%22usersSearchTerm%22%3A%22Clayton%20County%20GA%22%7D"
+            response2 = grabdata(url)
             json_data2, listings2 = parse(response2)
             for listing in listings2:
                 first_data2 = getFirst(listing)
@@ -276,7 +259,6 @@ def main():
                 combined_data2 = {**first_data2, **details2}
                 results.append(combined_data2)
             listingLength += len(listings2)
-            print(f"list length: {len(listings2)}")
             
     print(f"nextpage url: {url}, total listings length: {listingLength}")
     targetYear = ['2022', '2023', '2024']
